@@ -13,7 +13,7 @@ namespace ClusterClient.Clients
         {
         }
 
-        public async override Task<string> ProcessRequestAsync(string query, TimeSpan timeout)
+        public override async Task<string> ProcessRequestAsync(string query, TimeSpan timeout)
         {
             var uri = ReplicaAddresses[random.Next(ReplicaAddresses.Length)];
             var webRequest = CreateRequest(uri + "?query=" + query);
@@ -22,15 +22,11 @@ namespace ClusterClient.Clients
 
             var resultTask = ProcessRequestAsync(webRequest);
             await Task.WhenAny(resultTask, Task.Delay(timeout));
-            if (!resultTask.IsCompleted)
+            if (!resultTask.IsCompleted || resultTask.IsFaulted)
                 throw new TimeoutException();
-
             return resultTask.Result;
         }
 
-        protected override ILog Log
-        {
-            get { return LogManager.GetLogger(typeof(RandomClusterClient)); }
-        }
+        protected override ILog Log { get; } = LogManager.GetLogger(typeof(RandomClusterClient));
     }
 }

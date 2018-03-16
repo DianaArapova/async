@@ -50,7 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clients\ClusterClientBase.cs" />
+    <Compile Include="Clients\PriorityClient.cs" />
+    <Compile Include="Clients\SimpleClient.cs" />
     <Compile Include="Clients\RandomClusterClient.cs" />
+    <Compile Include="Clients\RoundRobinClient.cs" />
+    <Compile Include="Clients\SmartClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

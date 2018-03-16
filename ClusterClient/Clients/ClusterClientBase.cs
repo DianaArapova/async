@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -11,10 +12,16 @@ namespace ClusterClient.Clients
     public abstract class ClusterClientBase
     {
         protected string[] ReplicaAddresses { get; set; }
+	    protected List<int> Priority { get; set; }
 
-        protected ClusterClientBase(string[] replicaAddresses)
+	    protected ClusterClientBase(string[] replicaAddresses)
         {
             ReplicaAddresses = replicaAddresses;
+			Priority = new List<int>();
+	        for (var i = 0; i < replicaAddresses.Length; i++)
+	        {
+		        Priority.Add(1000);
+	        }
         }
 
         public abstract Task<string> ProcessRequestAsync(string query, TimeSpan timeout);
@@ -35,9 +42,9 @@ namespace ClusterClient.Clients
             var timer = Stopwatch.StartNew();
             using (var response = await request.GetResponseAsync())
             {
-                var result = await new StreamReader(response.GetResponseStream(), Encoding.UTF8).ReadToEndAsync();
-                Log.InfoFormat("Response from {0} received in {1} ms", request.RequestUri, timer.ElapsedMilliseconds);
-                return result;
+				var result = await new StreamReader(response.GetResponseStream(), Encoding.UTF8).ReadToEndAsync();
+		        Log.InfoFormat("Response from {0} received in {1} ms", request.RequestUri, timer.ElapsedMilliseconds);
+		        return result;
             }
         }
     }
